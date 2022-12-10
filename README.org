@@ -1,0 +1,38 @@
+:PROPERTIES:
+:ID: 0A1B2CF7-911F-441B-89B3-DAA9C1631E41
+:END:
+#+title: README
+#+author: Gary Klimowicz
+#+date: [2022-12-09 19:23 Fri]
+#+options: toc:nil H:5
+#+latex_header: \usepackage{titlesec}
+#+latex_header: \usepackage{parskip}
+#+latex_header: \usepackage{hyperref}
+#+latex_header: \usepackage{textgreek}
+#+latex_header: \hypersetup{linktoc = all, colorlinks = true, urlcolor = blue, citecolor = blue, linkcolor = blue}
+#+latex_header: \titlespacing{\subsection}{0pt}{*4}{*1.5}
+#+latex_header: \titlespacing{\subsubsection}{0pt}{*4}{*1.5}
+#+latex_header: \parindent=0pt
+
+#  LocalWords: foo
+
+# To create Markdown version: =(org-ref-export-to-markdown)=
+
+* Introduction
+This repository contains the Maude code from the paper Algebraic Semantics of the C Preprocessor and Correctness of its Refactorings Alejandra Garrido, José Meseguer, and Ralph Johnson.
+
+This repository also contains the Maude specification from Alejandra Garrido's Ph.D. thesis.
+
+I haven't dug into these yet to identify the differences.
+
+*  Files
+
+** =cpp-garrido-paper.maude=
+This is the Appendix to the paper ``Algebraic Semantics of the C Preprocessor and Correctness of its Refactorings`` by Alejandra Garrido, José Meseguer, and Ralph Johnson [[cite:&garrido-2012-algeb-seman-c-prepr-correc-its-refac]]. The appendix has the full specification of the C preprocessor syntax and semantics.
+
+** =cpp-garrido-thesis.maude=
+This is Appendix A of Alejandra Garrido's thesis [[cite:&garrido-2005-progr-refactor-presence-preproc-direct]], with the full specification of the C preprocessor syntax and semantics.
+
+
+bibliographystyle:unsrt
+[[bibliography:~/Documents/Bibliography/references.bib]]
