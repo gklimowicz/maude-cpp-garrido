@@ -3,7 +3,7 @@
 ---   - [^ ][.] needs space before the [.].
 ---   - [:] with no spaces between variable names and type.
 
--- TODO Then attempt to load and find additional errors.
+--- TODO Then attempt to load and find additional errors.
 
 
 
@@ -14,26 +14,26 @@ fmod IDENTIFIER is
   pr QID .
   sort Identifier IdentifierList IdentifierListP .
   subsorts Qid < Identifier < IdentifierList .
-  op ‘(‘) : -> IdentifierListP .
-  op ‘(_‘) : IdentifierList -> IdentifierListP .
+  op `(`) : -> IdentifierListP .
+  op `(_`) : IdentifierList -> IdentifierListP .
   op _,_ : IdentifierList IdentifierList -> IdentifierList [assoc] .
   op size : IdentifierListP -> Nat .
   op _in_ : Identifier IdentifierListP -> Bool .
   op pos : Identifier IdentifierListP -> Nat .
   op elemAt : Nat IdentifierListP -> Identifier .
   op cons : Identifier IdentifierListP -> IdentifierListP .
-  vars I I’ : Identifier . var IL : IdentifierList . var N : Nat .
+  vars I I' : Identifier . var IL : IdentifierList . var N : Nat .
   var ILP : IdentifierListP .
   eq size(()) = 0 .
   eq size((I, IL)) = 1 + size((IL)) .
   eq size((I)) = 1 .
   eq I in () = false .
-  eq I in (I’, IL) = (I == I’) or (I in (IL)) .
-  eq I in (I’) = (I == I’) .
+  eq I in (I', IL) = (I == I') or (I in (IL)) .
+  eq I in (I') = (I == I') .
   eq pos(I, ()) = 0 .
-  ceq pos(I, (I’, IL)) = 1 if (I == I’) .
-  ceq pos(I, (I’, IL)) = 1 + pos(I, (IL)) if (I =/= I’) and (I in (IL)) .
-  ceq pos(I,(I’)) = 1 if (I == I’) .
+  ceq pos(I, (I', IL)) = 1 if (I == I') .
+  ceq pos(I, (I', IL)) = 1 + pos(I, (IL)) if (I =/= I') and (I in (IL)) .
+  ceq pos(I,(I')) = 1 if (I == I') .
   eq pos(I, (IL)) = 0 [owise] .
   eq elemAt(1, (I, IL)) = I .
   eq elemAt(s(N), (I, IL)) = elemAt(N, (IL)) .
@@ -49,9 +49,9 @@ fmod TOKEN is
   op nil : -> TokenSequence .
   op __ : TokenSequence TokenSequence -> TokenSequence [assoc id: nil] .
   op _inTS_ : Token TokenSequence -> Bool .
-  vars T T’ : Token . var TS : TokenSequence .
+  vars T T' : Token . var TS : TokenSequence .
   eq T inTS nil = false .
-  eq T inTS (T’ TS) = (T == T’) or (T inTS TS) .
+  eq T inTS (T' TS) = (T == T') or (T inTS TS) .
 endfm
 
 fmod COND-EXP-SYNTAX is
@@ -146,9 +146,9 @@ fmod COND-DIR-SYNTAX is ex CPP-DIR-SYNTAX .
   op #if_cr : TokenSequence -> CondDir .
   op #ifdef_cr : Identifier -> CondDir .
   op #ifndef_cr : Identifier -> CondDir .
-  op #elif_cr : TokenSequence -> ConDir .
-  op #else‘cr : -> CondDir .
-  op #endif‘cr : -> CondDir .
+  op #elif_cr : TokenSequence -> CondDir .
+  op #else`cr : -> CondDir .
+  op #endif`cr : -> CondDir .
 endfm
 
 
@@ -157,21 +157,23 @@ fmod LINE-SEQ-SYNTAX is
   pr TOKEN .
   sorts Line LineSeq .
   subsorts CppDirective < Line .
-  op _cr : TokenSequence -> Line
+  op _cr : TokenSequence -> Line .
   op nilLS : -> LineSeq [ctor] .
-  op __ : Line LineSeq -> LineSeq [ctor] . op _++_ : LineSeq LineSeq -> LineSeq . op _inLS_ : LineSeq LineSeq -> Bool .
+  op __ : Line LineSeq -> LineSeq [ctor] .
+  op _++_ : LineSeq LineSeq -> LineSeq .
+  op _inLS_ : LineSeq LineSeq -> Bool .
   op _consecInLS_ : LineSeq LineSeq -> Bool .
-  vars L L’ : Line . vars LS1 LS2 : LineSeq .
+  vars L L' : Line . vars LS1 LS2 : LineSeq .
   eq nilLS ++ LS2 = LS2 .
   eq (L LS1) ++ LS2 = L (LS1 ++ LS2) .
   eq nilLS inLS LS2 = true .
   eq L LS1 inLS nilLS = false .
   eq L LS1 inLS L LS2 = LS1 consecInLS LS2 .
-  ceq L LS1 inLS L’ LS2 = L LS1 inLS LS2 if L =/= L’ .
+  ceq L LS1 inLS L' LS2 = L LS1 inLS LS2 if L =/= L' .
   eq nilLS consecInLS LS2 = true .
   eq L LS1 consecInLS nilLS = false .
   eq L LS1 consecInLS L LS2 = LS1 consecInLS LS2 .
-  eq L LS1 consecInLS L’ LS2 = false .
+  eq L LS1 consecInLS L' LS2 = false .
 endfm
 
 
@@ -201,11 +203,11 @@ fmod TOKEN-TO-ARG is pr TOKEN .
   eq size(TS1 ; TSL) = 1 + size(TSL) .
   eq elemAtTS(1, (TS1 ; TSL)) = TS1 .
   eq elemAtTS(s(N), (TS1 ; TSL)) = elemAtTS(N, TSL) .
-  ceq toTokenSeqList(TS1) = TS1 if not (’‘, inTS TS1) .
-  ceq toTokenSeqList(TS1 ’‘, TS2) = TS1 ; toTokenSeqList(TS2)
-    if not (’‘, inTS TS1) and (’‘, inTS TS2) .
-  ceq toTokenSeqList(TS1 ’‘, TS2) = TS1 ; TS2
-    if not (’‘, inTS TS1) and not (’‘, inTS TS2) .
+  ceq toTokenSeqList(TS1) = TS1 if not ('`, inTS TS1) .
+  ceq toTokenSeqList(TS1 '`, TS2) = TS1 ; toTokenSeqList(TS2)
+    if not ('`, inTS TS1) and ('`, inTS TS2) .
+  ceq toTokenSeqList(TS1 '`, TS2) = TS1 ; TS2
+    if not ('`, inTS TS1) and not ('`, inTS TS2) .
 endfm
 
 
@@ -225,24 +227,24 @@ fmod MACRO-DEF is
   eq name(name N params PL replText TS) = N .
   eq hasArgs(name N replText TS) = false .
   eq hasArgs(name N params PL replText TS) = true .
-  eq expand(name N replText TS) = ex-rec(‘(‘), TS, nilTSL) . var TSL : TokenSeqList .
+  eq expand(name N replText TS) = ex-rec(`(`), TS, nilTSL) . var TSL : TokenSeqList .
   ceq expandWithArgs(name N params PL replText TS, TSL) = nil
     if ( size(PL) =/= size(TSL) ) .
   eq expandWithArgs(name N params PL replText TS, TSL)
     = ex-rec(PL, TS, TSL) [owise] .
   eq ex-rec(PL, nil, TSL) = nil .
-  eq ex-rec(PL, ’# T TS, TSL) = dquote elemAtTS(pos(T, PL), TSL) dquote
+  eq ex-rec(PL, '# T TS, TSL) = dquote elemAtTS(pos(T, PL), TSL) dquote
                         ex-rec(PL, TS, TSL) .
-  ceq ex-rec(PL, T ’## T2 TS, TSL)
+  ceq ex-rec(PL, T '## T2 TS, TSL)
     = qid(string(T) + string(T2)) ex-rec(PL, TS, TSL)
     if not(T in PL) and not(T2 in PL) .
-  ceq ex-rec(PL, T ’## T2 TS, TSL)
+  ceq ex-rec(PL, T '## T2 TS, TSL)
     = qid(string(elemAtTS(pos(T, PL), TSL)) + string(T2)) ex-rec(PL, TS, TSL)
     if (T in PL) and not(T2 in PL) .
-  ceq ex-rec(PL, T ’## T2 TS, TSL)
+  ceq ex-rec(PL, T '## T2 TS, TSL)
     = qid(string(T) + string(elemAtTS(pos(T2, PL), TSL))) ex-rec(PL, TS, TSL)
     if not(T in PL) and (T2 in PL) .
-    eq ex-rec(PL, T ’## T2 TS, TSL) = qid(string(elemAtTS(pos(T, PL), TSL)) +
+    eq ex-rec(PL, T '## T2 TS, TSL) = qid(string(elemAtTS(pos(T, PL), TSL)) +
           string(elemAtTS(pos(T2, PL), TSL))) ex-rec(PL, TS, TSL) [owise] .
   ceq ex-rec(PL, T TS, TSL) = T ex-rec(PL, TS, TSL) if not(T in PL) .
   ceq ex-rec(PL, T TS, TSL) = elemAtTS(pos(T, PL), TSL) ex-rec(PL, TS, TSL)
@@ -260,18 +262,18 @@ fmod MACRO-TABLE is
   op isMacroWithArgs : Identifier MacroTable -> Bool .
   op isMacroWithoutArgs : Identifier MacroTable -> Bool .
   op remove : Identifier MacroTable -> MacroTable .
-  vars N N’ : Identifier . vars M M’ : MacroDef . var MT : MacroTable .
+  vars N N' : Identifier . vars M M' : MacroDef . var MT : MacroTable .
   eq ([N : M] MT)[N] = M .
-  eq ([N : M’] MT)[N <- M] = [N : M] MT .
+  eq ([N : M'] MT)[N <- M] = [N : M] MT .
   eq MT[N <- M] = MT [N : M] [owise] .
   eq isMacro(N, empty) = false .
-  eq isMacro(N, ([N’ : M] MT)) = (N == N’) or isMacro(N, MT) .
+  eq isMacro(N, ([N' : M] MT)) = (N == N') or isMacro(N, MT) .
   eq isMacroWithArgs(N, MT) = isMacro(N, MT) and hasArgs(MT[N]) .
   eq isMacroWithoutArgs(N, MT) = isMacro(N, MT) and not hasArgs(MT[N]) .
   eq remove(N, empty) = empty .
   eq remove(N, ([N : M] MT)) = remove(N, MT) .
-  ceq remove(N, ([N’ : M] MT)) = [N’ : M]
-  remove(N, MT) if N =/= N’ .
+  ceq remove(N, ([N' : M] MT)) = [N' : M]
+  remove(N, MT) if N =/= N' .
 endfm
 
 
@@ -295,9 +297,8 @@ fmod COND-EXP-SEMANTICS is pr COND-AUX .
   eq evalB(T, MT) = false .     --- T is not a macro
   eq evalA(T, MT) = 0 .      --- T is not a macro
   ceq toCondExp(T, MT) = toCondExp(expand(MT[T]), MT)
-    = toCondExp(expandWithArgs(MT[T], toTokenSeqList(AS)), MT)
     if isMacroWithoutArgs(T, MT) .
-  ceq toCondExp(T ’‘( AS ’‘), MT)
+  ceq toCondExp(T '`( AS '`), MT)
     = toCondExp(expandWithArgs(MT[T], toTokenSeqList(AS)), MT)
     if isMacroWithArgs(T, MT) .
   ceq toCondExp(T, MT) = e(toInt(string(T)))  if isNumber(string(T)) .
@@ -308,69 +309,69 @@ fmod DEF-COND-SEMANTICS is pr DEF-COND-SYNTAX .
   ex COND-EXP-SEMANTICS .
   var N : Identifier . var MT : MacroTable .
   eq evalB(defined N, MT) = isMacro(N, MT) .
-  eq toCondExp(’defined N, MT) = defined N .
+  eq toCondExp('defined N, MT) = defined N .
 endfm
 
 
 fmod ARITH-EXP-SEMANTICS is pr ARITH-EXP-SYNTAX .
   ex COND-EXP-SEMANTICS .
-  vars E E’ : CondExp . var MT : MacroTable .
-  eq evalA(E + E’, MT) = evalA(E, MT) + evalA(E’, MT) .
-  eq evalA(E - E’, MT) = evalA(E, MT) - evalA(E’, MT) .
-  eq evalA(E * E’, MT) = evalA(E, MT) * evalA(E’, MT) .
-  eq evalA(E / E’, MT) = evalA(E, MT) quo evalA(E’, MT) .
-  eq evalA(E % E’, MT) = evalA(E, MT) rem evalA(E’, MT) .
+  vars E E' : CondExp . var MT : MacroTable .
+  eq evalA(E + E', MT) = evalA(E, MT) + evalA(E', MT) .
+  eq evalA(E - E', MT) = evalA(E, MT) - evalA(E', MT) .
+  eq evalA(E * E', MT) = evalA(E, MT) * evalA(E', MT) .
+  eq evalA(E / E', MT) = evalA(E, MT) quo evalA(E', MT) .
+  eq evalA(E % E', MT) = evalA(E, MT) rem evalA(E', MT) .
   var T : Token . var TS : TokenSequence .
-  eq toCondExp(T ’+ TS, MT) = toCondExp(T, MT) + toCondExp(TS, MT) .
-  eq toCondExp(T ’- TS, MT) = toCondExp(T, MT) - toCondExp(TS, MT) .
-  eq toCondExp(T ’* TS, MT) = toCondExp(T, MT) * toCondExp(TS, MT) .
-  eq toCondExp(T ’/ TS, MT) = toCondExp(T, MT) / toCondExp(TS, MT) .
-  eq toCondExp(T ’% TS, MT) = toCondExp(T, MT) % toCondExp(TS, MT) .
+  eq toCondExp(T '+ TS, MT) = toCondExp(T, MT) + toCondExp(TS, MT) .
+  eq toCondExp(T '- TS, MT) = toCondExp(T, MT) - toCondExp(TS, MT) .
+  eq toCondExp(T '* TS, MT) = toCondExp(T, MT) * toCondExp(TS, MT) .
+  eq toCondExp(T '/ TS, MT) = toCondExp(T, MT) / toCondExp(TS, MT) .
+  eq toCondExp(T '% TS, MT) = toCondExp(T, MT) % toCondExp(TS, MT) .
 endfm
 
 
 fmod BIT-EXP-SEMANTICS is pr BIT-EXP-SYNTAX .
   ex COND-EXP-SEMANTICS .
-  vars E E’ : CondExp . var MT : MacroTable .
-  eq evalA(E << E’, MT) = evalA(E, MT) << evalA(E’, MT) .
-  eq evalA(E >> E’, MT) = evalA(E, MT) >> evalA(E’, MT) .
-  eq evalA(E & E’, MT) = evalA(E, MT) & evalA(E’, MT) .
-  eq evalA(E ^ E’, MT) = evalA(E, MT) xor evalA(E’, MT) .
-  eq evalA(E | E’, MT) = evalA(E, MT) | evalA(E’, MT) .
+  vars E E' : CondExp . var MT : MacroTable .
+  eq evalA(E << E', MT) = evalA(E, MT) << evalA(E', MT) .
+  eq evalA(E >> E', MT) = evalA(E, MT) >> evalA(E', MT) .
+  eq evalA(E & E', MT) = evalA(E, MT) & evalA(E', MT) .
+  eq evalA(E ^ E', MT) = evalA(E, MT) xor evalA(E', MT) .
+  eq evalA(E | E', MT) = evalA(E, MT) | evalA(E', MT) .
   var T : Token . var TS : TokenSequence .
-  eq toCondExp(T ’<< TS, MT) = toCondExp(T, MT) << toCondExp(TS, MT) .
+  eq toCondExp(T '<< TS, MT) = toCondExp(T, MT) << toCondExp(TS, MT) .
 endfm
 
 
 fmod REXP-SEMANTICS is pr REXP-SYNTAX .
   ex COND-EXP-SEMANTICS .
-  vars E E’ : CondExp . var MT : MacroTable .
-  eq evalB(E < E’, MT) = (evalA(E, MT) < evalA(E’, MT)) .
-  eq evalB(E <= E’, MT) = (evalA(E, MT) <= evalA(E’, MT)) .
-  eq evalB(E > E’, MT) = (evalA(E, MT) > evalA(E’, MT)) .
-  eq evalB(E >= E’, MT) = (evalA(E, MT) >= evalA(E’, MT)) .
-  eq evalB(E == E’, MT) = (evalA(E, MT) == evalA(E’, MT)) .
-  eq evalB(E != E’, MT) = (evalA(E, MT) =/= evalA(E’, MT)) .
+  vars E E' : CondExp . var MT : MacroTable .
+  eq evalB(E < E', MT) = (evalA(E, MT) < evalA(E', MT)) .
+  eq evalB(E <= E', MT) = (evalA(E, MT) <= evalA(E', MT)) .
+  eq evalB(E > E', MT) = (evalA(E, MT) > evalA(E', MT)) .
+  eq evalB(E >= E', MT) = (evalA(E, MT) >= evalA(E', MT)) .
+  eq evalB(E == E', MT) = (evalA(E, MT) == evalA(E', MT)) .
+  eq evalB(E != E', MT) = (evalA(E, MT) =/= evalA(E', MT)) .
   var T : Token . vars TS1 TS2 : TokenSequence .
-  eq toCondExp(T ’< TS2, MT) = toCondExp(T, MT) < toCondExp(TS2, MT) .
+  eq toCondExp(T '< TS2, MT) = toCondExp(T, MT) < toCondExp(TS2, MT) .
 endfm
 
 
 fmod BEXP-SEMANTICS is pr BEXP-SYNTAX .
   ex COND-EXP-SEMANTICS .
-  vars E E’ : CondExp . var MT : MacroTable . var TS : TokenSequence .
+  vars E E' : CondExp . var MT : MacroTable . var TS : TokenSequence .
   eq evalB(! E, MT) = not evalB(E, MT) .
-  eq evalB(E && E’, MT) = evalB(E, MT) and evalB(E’, MT) .
-  eq evalB(E || E’, MT) = evalB(E, MT) or evalB(E’, MT) .
-  eq toCondExp(’! TS, MT) = ! toCondExp(TS, MT) .
+  eq evalB(E && E', MT) = evalB(E, MT) and evalB(E', MT) .
+  eq evalB(E || E', MT) = evalB(E, MT) or evalB(E', MT) .
+  eq toCondExp('! TS, MT) = ! toCondExp(TS, MT) .
 endfm
 
 
-fmod CEXP-SEMANTICS is   CEXP-SYNTAX .
+fmod CEXP-SEMANTICS is pr CEXP-SYNTAX .
   ex COND-EXP-SEMANTICS .
-  vars C E E’ : CondExp .  var MT : MacroTable .
-  ceq evalB(C ? E : E’, M  = evalB(E, MT) if evalB(C, MT) .
-  ceq evalB(C ? E : E’, MT) = evalB(E’, MT) if not evalB(C, MT) .
+  vars C E E' : CondExp .  var MT : MacroTable .
+  ceq evalB(C ? E : E', M  = evalB(E, MT) if evalB(C, MT) .
+  ceq evalB(C ? E : E', MT) = evalB(E', MT) if not evalB(C, MT) .
 endfm
 
 fmod ALL-COND-EXP-SEMANTICS is
@@ -389,10 +390,10 @@ fmod SET-STRING is
   subsort String < SetString .
   op emptyS : -> SetString [ctor] .
   op __ : SetString SetString -> SetString [ctor assoc comm id: emptyS] . op _in_ : String SetString -> Bool .
-  vars X X’ : String . var S : SetString .
+  vars X X' : String . var S : SetString .
   eq X X = X .
   eq X in emptyS = false .
-  eq X in (X’ S) = X == X’ or X in S .
+  eq X in (X' S) = X == X' or X in S .
 endfm
 
 
@@ -405,12 +406,12 @@ fmod CFILES-MAP is
   op __ : CFilesMap? CFilesMap? -> CFilesMap? [ctor assoc comm id: empty] .
   op containsFileName : String CFilesMap? -> Bool .
   op dom : CFilesMap -> SetString .
-  vars N N’ : String . var LS : LineSeq .
-  vars FM FM1 FM2 : CFilesMap? . var FM’ : CFilesMap .
+  vars N N' : String . var LS : LineSeq .
+  vars FM FM1 FM2 : CFilesMap? . var FM' : CFilesMap .
   eq containsFileName(N, empty) = false .
-  eq containsFileName(N, [N’ : LS] FM) = (N == N’) or containsFileName(N, FM) .
+  eq containsFileName(N, [N' : LS] FM) = (N == N') or containsFileName(N, FM) .
   eq dom(empty) = emptyS .
-  eq dom([N : LS] FM’) = N dom(FM’) .
+  eq dom([N : LS] FM') = N dom(FM') .
   op reach : CFilesMap? SetString -> SetString .
   op includedFiles : LineSeq -> SetString .
   var S : SetString .
@@ -447,13 +448,13 @@ endfm
 fmod HELPING-OPS is
   pr CPP-STATE .
   op readFile : String CFilesMap -> LineSeq .
-  vars F F’ : String . var S : LineSeq . var FM : CFilesMap .
+  vars F F' : String . var S : LineSeq . var FM : CFilesMap .
   eq readFile(F, empty) = nilLS .
   eq readFile(F, [F : S] FM) = S .
-  ceq readFile(F, [F’ : S] FM) = readFile(F, FM) if F =/= F’ .
+  ceq readFile(F, [F' : S] FM) = readFile(F, FM) if F =/= F' .
   op initialCppState : CFilesMap -> CppState .
   eq initialCppState(FM) = files(FM), macroTbl(empty),
-        curMacroCalls(‘(‘)), skip(false), nestLevelOfSkipped(0),
+        curMacroCalls(`(`)), skip(false), nestLevelOfSkipped(0),
         branchTaken(false), outputStream(nil) .
 endfm
 
@@ -466,19 +467,19 @@ fmod LINE-SEQ-SEMANTICS is pr LINE-SEQ-SYNTAX .
   var ILP : IdentifierListP . var I : Identifier . var IL : IdentifierList .
   var T : Token . vars TS AS O : TokenSequence . var MT : MacroTable .
   eq state(nil cr, S) = S .
-  eq state((’## TS) cr, (curMacroCalls( (I, IL) ), skip(false), S))
+  eq state(('## TS) cr, (curMacroCalls( (I, IL) ), skip(false), S))
     = state(TS cr, (curMacroCalls( (IL) ), skip(false), S)) .
-  eq state((’## TS) cr, (curMacroCalls( (I) ), skip(false), S))
+  eq state(('## TS) cr, (curMacroCalls( (I) ), skip(false), S))
     = state(TS cr, (curMacroCalls( () ), skip(false), S)) .
   ceq state((T TS) cr, (macroTbl(MT), curMacroCalls(ILP), skip(false),
     outputStream(O), S))
     = state(TS cr, (macroTbl(MT), curMacroCalls(ILP), skip(false), outputStream(O T), S))
     if not(isMacro(T, MT)) or (T in ILP) .
-  ceq state((T ’‘( AS ’‘) TS) cr, (macroTbl(MT), curMacroCalls(ILP), skip(false), S))
-    = state((expandWithArgs(MT[T], toTokenSeqList(AS)) ’## TS) cr,
+  ceq state((T '`( AS '`) TS) cr, (macroTbl(MT), curMacroCalls(ILP), skip(false), S))
+    = state((expandWithArgs(MT[T], toTokenSeqList(AS)) '## TS) cr,
         (macroTbl(MT), curMacroCalls(cons(T, ILP)), skip(false), S)) if isMacroWithArgs(T, MT) .
   ceq state((T TS) cr, (macroTbl(MT), curMacroCalls(ILP), skip(false), S))
-    = state((expand(MT[T]) ’## TS) cr,
+    = state((expand(MT[T]) '## TS) cr,
         (macroTbl(MT), curMacroCalls(cons(T, ILP)), skip(false), S))
     if isMacroWithoutArgs(T, MT) .
   eq state((T TS) cr, (skip(true), S)) = skip(true), S .
@@ -581,23 +582,23 @@ fmod COND-DIR-SEMANTICS is pr COND-DIR-SYNTAX .
     if evalB(toCondExp(TS, AMT), AMT) = true .
 
   --- Case 1 of #else: Not skipping -> Skipping
-  eq state(#else‘cr, (skip(false), nestLevelOfSkipped(0), S))
+  eq state(#else`cr, (skip(false), nestLevelOfSkipped(0), S))
     = skip(true), nestLevelOfSkipped(1), S .
   --- Case 2 of #else: Skipping -> Skipping
-  eq state(#else‘cr, (skip(true), nestLevelOfSkipped(N), branchTaken(true), S))
+  eq state(#else`cr, (skip(true), nestLevelOfSkipped(N), branchTaken(true), S))
     = skip(true), nestLevelOfSkipped(N), branchTaken(true), S .
   --- Case 3 of #else: Skipping -> Not skipping
-  eq state(#else‘cr, (skip(true), nestLevelOfSkipped(1), branchTaken(false), S))
+  eq state(#else`cr, (skip(true), nestLevelOfSkipped(1), branchTaken(false), S))
     = skip(false), nestLevelOfSkipped(0), branchTaken(true), S .
 
   --- Case 1 of #endif: Not skipping -> Not skipping
-  eq state(#endif‘cr, (skip(false), branchTaken(true), S))
+  eq state(#endif`cr, (skip(false), branchTaken(true), S))
     = skip(false), branchTaken(false), S .
   --- Case 2 of #endif: Skipping -> Skipping
-  ceq state(#endif‘cr, (skip(true), nestLevelOfSkipped(N), S))
+  ceq state(#endif`cr, (skip(true), nestLevelOfSkipped(N), S))
     = skip(true), nestLevelOfSkipped(N - 1), S if N > 1 .
   --- Case 3 of #endif: Skipping -> Not Skipping
-  eq state(#endif‘cr, (skip(true), nestLevelOfSkipped(1), branchTaken(true), S))
+  eq state(#endif`cr, (skip(true), nestLevelOfSkipped(1), branchTaken(true), S))
     = skip(false), nestLevelOfSkipped(0), branchTaken(false), S .
 endfm
 
