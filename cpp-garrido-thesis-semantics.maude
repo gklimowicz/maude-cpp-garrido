@@ -39,7 +39,8 @@ fmod MACRO-DEF is
   pr MACRO-CALL-SYNTAX .
   sort MacroDef .
   op name_replText_ : Identifier TokenSequence -> MacroDef .
-  op name_params_replText_ : Identifier IdentifierListP TokenSequence -> MacroDef . op name : MacroDef -> Identifier .
+  op name_params_replText_ : Identifier IdentifierListP TokenSequence -> MacroDef .
+  op name : MacroDef -> Identifier .
   op hasArgs : MacroDef -> Bool .
   op expand : MacroDef -> TokenSequence .
   op expandWithArgs : MacroDef ArgListP -> TokenSequence .
@@ -455,7 +456,7 @@ endfm
 
 
 --- After loading the above specification, executing the line:
----    red preprocess(``foo.c'', empty, nil) .
+---    red preprocess("foo.c", empty, nil) .
 --- at the command prompt in Maude, it make it “read” the file “foo.c” (specified in
 --- module HELPING-OPS), which exercises the different Cpp directives. The result is:
 
